@@ -1,0 +1,218 @@
+public class TestProgram {
+
+ 
+    public static void main(String[] args) {
+        BinaryTree mytree = new BinaryTree();
+        
+        mytree.addNode(26);
+        mytree.addNode(9);
+        mytree.addNode(32);
+        mytree.addNode(3);
+        mytree.addNode(13);
+        mytree.addNode(1);
+        mytree.addNode(4);
+        mytree.addNode(28);
+        mytree.addNode(40);
+        
+        System.out.println("Traverse InOrder:");
+        mytree.traverseInOrder();
+        System.out.println("\n"+"Traverse PostOrder:");
+        mytree.traversePostOrder();
+        System.out.println("\n"+"Traverse PreOrder:");
+        mytree.traversePreOrder();
+        
+        int number_of_nodes=mytree.getSize();
+        System.out.println("\n"+"Number of nodes in the tree is: " + number_of_nodes);
+        
+        boolean ans1= mytree.searchNode(13);
+        System.out.println("\n"+"The number 13 in the tree: " + ans1);
+        
+        boolean ans2= mytree.searchNode(15);
+        System.out.println("\n"+"The number 15 in the tree: " + ans2);
+        
+        System.out.println("\n"+"PostOrder traversal after deleting the node 26 from tree is:");
+        mytree.deleteNode(26);
+        mytree.traversePostOrder();
+
+    }
+    
+}
+
+
+package testprogram;
+
+
+public class BinaryTree {
+    private class Node {
+
+        private int element;
+        private Node left;
+        private Node right;
+
+        public Node(int e) {
+            element = e;
+            right = null;
+            left = null;
+        }
+    }//----------- end of nested Node class -----------
+
+    private Node root = null;
+
+    public BinaryTree() {
+    } // constructor constructs an initially empty tree
+
+    public boolean isEmpty() {
+        return root == null;
+    }
+
+    // return the number of nodes/elements in the tree
+    public int getSize() {
+        return getSizeRecursive(root);
+    }
+
+    private int getSizeRecursive(Node n) {
+        if (n == null) {
+            return 0;
+        }
+        return 1 + getSizeRecursive(n.left) + getSizeRecursive(n.right);
+    }
+
+    // insert a node
+    public void addNode(int e) {
+        root = addNodeRecursive(root, e);
+
+    }
+
+    private Node addNodeRecursive(Node n, int e) {
+
+        // if the root is null, create a new node and return it
+        if (n == null) {
+            return new Node(e);
+        }
+
+        // if the given key is less than the root node,
+        // recur for the left subtree
+        if (e < n.element) {
+            n.left = addNodeRecursive(n.left, e);
+        } // otherwise, recur for the right subtree
+        else {
+            // key >= root.data
+            n.right = addNodeRecursive(n.right, e);
+        }
+
+        return n;
+    }
+
+    // search for a given node, return true if it is found, false otherwise 
+    public boolean searchNode(int e) {
+        return searchNodeRecursive(root, e);
+    }
+
+    private boolean searchNodeRecursive(Node n, int e) {
+        if (n == null) {
+            return false;
+        }
+        if (n.element > e) {
+            return searchNodeRecursive(n.left, e);
+        } else if (n.element < e) {
+            return searchNodeRecursive(n.right, e);
+        } else {
+            return true;
+        }
+    }
+
+    //delete a node
+    public void deleteNode(int e) {
+        root = deleteNodeRecursive(root, e);
+    }
+
+    private Node deleteNodeRecursive(Node n, int e) {
+        if (n == null) {
+            return n;
+        }
+        if (n.element > e) {
+            n.left = deleteNodeRecursive(n.left, e);
+        } else if (n.element < e) {
+            n.right = deleteNodeRecursive(n, e);
+        } else {
+            // node with only one child or no child
+            if (n.left == null) {
+                return n.right;
+            } else if (n.right == null) {
+                return n.left;
+            }
+
+            // node with two children: Get the inorder
+            // successor (smallest in the right subtree)
+            n.element = findSmallestValue(n.right);
+
+            // Delete the inorder successor
+            n.right = deleteNodeRecursive(n.right, n.element);
+        }
+
+        return n;
+    }
+
+    //finds the smallest value starting from the subtree rooted at Node n.
+    private int findSmallestValue(Node n) {
+        if (n.left == null) {
+            return n.element;
+        } else {
+            return findSmallestValue(n.left);
+        }
+    }
+
+    // in-order traversal
+    public void traverseInOrder() {
+        traverseInOrderRecursive(root);
+    }
+
+    private void traverseInOrderRecursive(Node n) {
+        if (n.left != null) {
+            traverseInOrderRecursive(n.left);
+        }
+        System.out.println(" " + n.element);
+        if (n.right != null) {
+            traverseInOrderRecursive(n.right);
+        }
+
+    }
+
+    // post-order traversal
+    public void traversePostOrder() {
+        traversePostOrderRecursive(root);
+    }
+
+    private void traversePostOrderRecursive(Node n) {
+        if (n.left != null) {
+            traversePostOrderRecursive(n.left);
+        }
+        if (n.right != null) {
+            traversePostOrderRecursive(n.right);
+        }
+        System.out.println(" " + n.element);
+
+    }
+
+    // pre-order traversal
+    public void traversePreOrder() {
+        traversePreOrderRecursive(root);
+    }
+
+    private void traversePreOrderRecursive(Node n) {
+        System.out.println(" " + n.element);
+        if (n.left != null) {
+            traversePreOrderRecursive(n.left);
+        }
+        if (n.right != null) {
+            traversePreOrderRecursive(n.right);
+        }
+    }
+
+    // our visit is printing the nodes stored values
+    private void visit(int value) {
+        System.out.print(" " + value);
+    }
+
+}
+
